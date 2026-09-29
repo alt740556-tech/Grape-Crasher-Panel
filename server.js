@@ -14,7 +14,7 @@ const players = new Map();
 
 app.get('/loader.lua', (req, res) => {
     const loader = `local BASE = "${PUBLIC_URL}"
-local KEY  = "xenooooo"
+local KEY  = ""
 
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
