@@ -1,4 +1,4 @@
- <<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -20,6 +20,8 @@
         .copy-loader-btn { background: #2b1a1a; border: 1px solid #462a2a; color: #dfc8c8; padding: 6px 16px; border-radius: 30px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
         .copy-loader-btn:hover { background: #3f2626; border-color: #664040; }
         .copy-loader-btn .icon { font-size: 16px; }
+        .logout-btn { background: #2e1515; border: 1px solid #5c2020; color: #f87171; padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .logout-btn:hover { background: #3f1a1a; border-color: #8f2d2d; }
         .header-stats { display: flex; gap: 20px; font-size: 13px; color: #b89a9a; }
         .header-stats span { display: flex; align-items: center; gap: 5px; }
         .header-stats .num { color: #f5e8e8; font-weight: 600; font-size: 15px; min-width: 18px; }
@@ -132,9 +134,97 @@
         .loader-modal .modal-actions .btn-primary { background: #22c55e; border-color: #4ade80; color: #fff; }
         .loader-modal .modal-actions .btn-primary:hover { background: #4ade80; }
         .loader-modal .modal-actions .btn:hover { background: #3f2626; }
+
+        /* ===== LOGIN / PASSKEY GATE ===== */
+        .lock-screen {
+            position: fixed; inset: 0; z-index: 5000;
+            background: radial-gradient(circle at 50% 30%, #1f1212, #0d0b0b 70%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; transition: opacity 0.4s ease, visibility 0.4s;
+        }
+        .lock-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .lock-card {
+            background: #1f1212; border: 1px solid #462a2a; border-radius: 20px;
+            padding: 40px 36px 32px; max-width: 420px; width: 100%;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(34, 197, 94, 0.08);
+            text-align: center; animation: lockPop 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes lockPop { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .lock-icon {
+            width: 64px; height: 64px; margin: 0 auto 18px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #2e1515, #1f2e1a);
+            border: 2px solid #3f2626; font-size: 28px;
+            box-shadow: 0 0 24px rgba(34, 197, 94, 0.15);
+        }
+        .lock-card h1 {
+            font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px;
+            background: linear-gradient(135deg, #f87171, #22c55e);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .lock-card .lock-sub { font-size: 13px; color: #8f6b6b; margin-bottom: 26px; }
+        .lock-input-wrap { position: relative; margin-bottom: 14px; }
+        .lock-input {
+            width: 100%; padding: 14px 46px 14px 18px;
+            background: #140d0d; border: 1px solid #372020; border-radius: 12px;
+            color: #f5e8e8; font-size: 15px; font-family: inherit;
+            outline: none; transition: all 0.2s; letter-spacing: 1px;
+        }
+        .lock-input::placeholder { color: #6e4b4b; letter-spacing: 0; }
+        .lock-input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12); }
+        .lock-input.error { border-color: #f87171; box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15); animation: shake 0.4s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .lock-eye {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; font-size: 16px;
+            color: #8f6b6b; padding: 4px; transition: color 0.2s;
+        }
+        .lock-eye:hover { color: #dfc8c8; }
+        .lock-submit {
+            width: 100%; padding: 13px; border-radius: 12px; border: 1px solid #22c55e;
+            background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff;
+            font-size: 14px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
+        }
+        .lock-submit:hover:not(:disabled) { background: linear-gradient(135deg, #22c55e, #4ade80); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3); }
+        .lock-submit:active:not(:disabled) { transform: scale(0.98); }
+        .lock-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+        .lock-error {
+            color: #f87171; font-size: 12px; min-height: 16px; margin-bottom: 8px;
+            transition: opacity 0.2s; opacity: 0;
+        }
+        .lock-error.show { opacity: 1; }
+        .lock-footer { font-size: 11px; color: #4b3a3a; margin-top: 22px; }
+        .lock-footer span { color: #8f6b6b; }
+
+        /* Hide app while locked */
+        body.locked .app { display: none; }
+        body.locked .toast { display: none; }
     </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ===== PASSKEY LOCK SCREEN ===== -->
+<div class="lock-screen" id="lockScreen">
+    <div class="lock-card">
+        <div class="lock-icon">🔒</div>
+        <h1>Traced Hub</h1>
+        <p class="lock-sub">Enter your passkey to access the panel</p>
+        <form id="lockForm" autocomplete="off">
+            <div class="lock-input-wrap">
+                <input type="password" class="lock-input" id="passkeyInput" placeholder="Enter passkey…" autocomplete="off" spellcheck="false" />
+                <button type="button" class="lock-eye" id="toggleEye" aria-label="Show passkey">👁</button>
+            </div>
+            <div class="lock-error" id="lockError">Incorrect passkey. Try again.</div>
+            <button type="submit" class="lock-submit" id="lockSubmit">Unlock Panel</button>
+        </form>
+        <p class="lock-footer">Protected by <span>Traced Security</span></p>
+    </div>
+</div>
 
 <div class="toast" id="toast"></div>
 <div class="loader-modal-overlay" id="loaderModal">
@@ -162,6 +252,7 @@
             <button class="copy-loader-btn" onclick="openLoaderModal()">
                 <span class="icon">📋</span> Copy loader
             </button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
             <div class="header-stats">
                 <span>🟢 <span class="num" id="onlineCount">0</span> online</span>
                 <span>⏱ <span class="num" id="refreshTimer">1s</span></span>
@@ -240,6 +331,89 @@
 </div>
 
 <script>
+    /* ============================================================
+       PASSKEY CONFIGURATION
+       ============================================================
+       Change PASSKEY to whatever you want. This is the password
+       users must enter to unlock the panel.
+
+       ⚠️  WARNING: Client-side passkeys are NOT secure. Anyone
+       who views the page source can find this value. For real
+       security, validate the passkey on your server instead.
+       ============================================================ */
+    const PASSKEY = "traced2024";
+    const SESSION_KEY = "traced_hub_authed";
+
+    const lockScreen = document.getElementById('lockScreen');
+    const lockForm = document.getElementById('lockForm');
+    const passkeyInput = document.getElementById('passkeyInput');
+    const lockError = document.getElementById('lockError');
+    const lockSubmit = document.getElementById('lockSubmit');
+    const toggleEye = document.getElementById('toggleEye');
+
+    // Show/hide passkey
+    toggleEye.addEventListener('click', () => {
+        if (passkeyInput.type === 'password') {
+            passkeyInput.type = 'text';
+            toggleEye.textContent = '🙈';
+        } else {
+            passkeyInput.type = 'password';
+            toggleEye.textContent = '👁';
+        }
+    });
+
+    // Unlock the panel
+    function unlockPanel() {
+        document.body.classList.remove('locked');
+        lockScreen.classList.add('hidden');
+        // Start polling only after unlock
+        startPanel();
+    }
+
+    // Handle login
+    lockForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const entered = passkeyInput.value;
+
+        if (entered === PASSKEY) {
+            sessionStorage.setItem(SESSION_KEY, "1");
+            lockSubmit.disabled = true;
+            lockSubmit.textContent = "Unlocking…";
+            setTimeout(unlockPanel, 350);
+        } else {
+            lockError.classList.add('show');
+            passkeyInput.classList.add('error');
+            passkeyInput.value = '';
+            passkeyInput.focus();
+            setTimeout(() => passkeyInput.classList.remove('error'), 450);
+        }
+    });
+
+    // Clear error while typing
+    passkeyInput.addEventListener('input', () => {
+        lockError.classList.remove('show');
+    });
+
+    // Logout
+    function logout() {
+        sessionStorage.removeItem(SESSION_KEY);
+        location.reload();
+    }
+
+    // Auto-check session on load
+    (function checkSession() {
+        if (sessionStorage.getItem(SESSION_KEY) === "1") {
+            document.body.classList.remove('locked');
+            lockScreen.classList.add('hidden');
+            // Panel init happens in startPanel() below
+        } else {
+            setTimeout(() => passkeyInput.focus(), 300);
+        }
+    })();
+
+    /* ============================================================
+       PANEL LOGIC (unchanged from your version)
+       ============================================================ */
     const API_BASE = window.location.origin;
     const POLL_INTERVAL = 1000;
 
@@ -248,6 +422,9 @@
     let commandState = { fps_limit: false, lag_n: false, lag_c: false };
     let toastTimeout = null;
     let searchQuery = '';
+    let pollCount = 0;
+    let pollTimer = null;
+    let panelStarted = false;
 
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
@@ -495,8 +672,6 @@
         sendCommand(selectedUserId, { crash: true }).then(() => showToast(`Crash sent to ${player.username}`, '💥'));
     });
 
-    let pollCount = 0;
-
     async function poll() {
         const data = await fetchPlayers();
         const newMap = new Map();
@@ -523,21 +698,31 @@
         pollCount = (pollCount + 1) % 999;
     }
 
-    searchInput.addEventListener('input', function() {
-        searchQuery = this.value;
-        renderPlayers();
-    });
+    function startPanel() {
+        if (panelStarted) return;
+        panelStarted = true;
 
-    poll();
-    setInterval(poll, POLL_INTERVAL);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+        searchInput.addEventListener('input', function() {
+            searchQuery = this.value;
+            renderPlayers();
+        });
 
-    setTimeout(() => {
-        if (!selectedUserId) {
-            const first = Array.from(players.values()).find(p => p.online);
-            if (first) selectPlayer(first.user_id);
-        }
-    }, 2000);
+        poll();
+        pollTimer = setInterval(poll, POLL_INTERVAL);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+
+        setTimeout(() => {
+            if (!selectedUserId) {
+                const first = Array.from(players.values()).find(p => p.online);
+                if (first) selectPlayer(first.user_id);
+            }
+        }, 2000);
+    }
+
+    // If already authed, start immediately
+    if (sessionStorage.getItem(SESSION_KEY) === "1") {
+        startPanel();
+    }
 </script>
 
 </body>
