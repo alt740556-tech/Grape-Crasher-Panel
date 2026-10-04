@@ -415,7 +415,7 @@ local function poll()
     end
     if data.kick == true and not kicked then
         kicked = true
-        LP:Kick("You have been removed for cheating, please remove any cheats to play | CODE: BAC-1633")
+        LP:Kick("You have been kicked by god 6767")
     end
 end
 
